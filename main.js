@@ -1,7 +1,9 @@
-const state = {
+const state = createReactiveState({
   count: 0,
-  name: "Aji"
-}
+  user: {
+    name: "Aji"
+  }
+})
 
 const deps = {}
 
@@ -11,10 +13,10 @@ el1.textContent = state.count
 bindElement(state, "count", el1)
 
 const el2 = document.getElementById("appDisplay2")
-el2.textContent = state.name
+el2.textContent = state.user.name
 
-bindElement(state, "name", el2)
-state.name = "Jithin"
+bindElement(state.user, "name", el2)
+state.user.name = "Jithin"
 
 const incBtn = document.getElementById("incrementButton")
 incBtn.addEventListener("click", () => {
@@ -29,16 +31,39 @@ function bindElement(state, key, el) {
   if(!deps[key]) deps[key] = []
   deps[key].push(el)
 
-  Object.defineProperty(state, key, {
-    get() {
+  el.textContent = state[key]
+
+}
+
+delete state.count
+state.count = 3
+
+state.guess = 5
+
+state.user.name = "Aji"
+
+
+function createReactiveState(obj) {
+  return new Proxy(obj, {
+    get(target, key) {
+      let value = target[key]
+
+      if(typeof value == "object" && value !== null) {
+        createReactiveState(value)
+      }
+
       return value
     },
+    set(target, key, value) {
+      target[key] = value
 
-    set(newVal) {
-      value = newVal
-      deps[key].forEach(elem => {
-        elem.textContent = newVal
-      })
+      if(deps[key]) {
+        deps[key].forEach(elem => {
+          elem.textContent = value
+        })
+      }
+
+      return true
     }
   })
 }
