@@ -28,16 +28,28 @@ const setUpDefineReactivity = () => {
   })
 }
 
-
-const setUpProxyReactivity = () => {
-
+const handler = {
+  get(target, key) {
+    return target[key]
+  },
+  set(target, key, value) {
+    if(key == "value") {
+      target[key] = value
+      proxyOutput.textContent = target[key]
+      return true
+    }
+  }
 }
+
+const proxyCopy = new Proxy(state, handler)
+
 
 renderDefineUIUpdate()
 setUpDefineReactivity()
 
 sharedInput.addEventListener("input", () => {
   state.value = sharedInput.value
+  proxyCopy.value = sharedInput.value
   renderManual()
 })
 
