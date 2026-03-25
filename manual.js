@@ -28,6 +28,11 @@ const setUpDefineReactivity = () => {
   })
 }
 
+
+const setUpProxyReactivity = () => {
+
+}
+
 renderDefineUIUpdate()
 setUpDefineReactivity()
 
