@@ -45,29 +45,28 @@ setUpDefineReactivity()
 
 const domBinding = new Map()
 
-const effect = () => {
-  for (let attr in proxyCopy) {
-    if(domBinding.has(attr)) {
-      let elem = domBinding.get(attr);
-      elem.textContent = proxyCopy[attr]
-    }
-  }
-}
-
 const handler = {
   get(target, key) {
     return target[key]
   },
   set(target, key, value) {
     target[key] = value
-    effect()
+    if(domBinding.has(key)){
+      for(const elem of domBinding.get(key)) {
+        elem.textContent = value
+      }
+    }
     return true
   }
 }
 
 const proxyCopy = new Proxy(state, handler)
 const bindAttr = (elem, obj, attr) => {
-  domBinding.set(attr, elem)
+  if(!domBinding.has(attr)) {
+    domBinding.set(attr, new Set())
+  }
+  let elements = domBinding.get(attr)
+  elements.add(elem)
 }
 
 bindAttr(proxyOutput, proxyCopy, "value")
