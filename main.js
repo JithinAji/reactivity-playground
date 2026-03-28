@@ -1,69 +1,26 @@
-const state = createReactiveState({
-  count: 0,
-  user: {
-    name: "Aji"
-  }
-})
+import attachListeners from "./manualBinding.js"
+import defineBinding from "./objectDefineBinding.js"
 
-const deps = {}
+const tabs = document.getElementsByClassName("tabs")
 
-const el1 = document.getElementById("appDisplay1")
-el1.textContent = state.count
+const codeDisplay = document.getElementById("codeDisplay")
 
-bindElement(state, "count", el1)
+const input = document.getElementById("sharedInput")
 
-const el2 = document.getElementById("appDisplay2")
-el2.textContent = state.user.name
+const button = document.getElementById("addProperty")
 
-bindElement(state.user, "name", el2)
-state.user.name = "Jithin"
+const manualOutput = document.getElementById("manualOutput")
 
-const incBtn = document.getElementById("incrementButton")
-incBtn.addEventListener("click", () => {
-  state.count ++
-  //el.textContent = state.count
-})
+const defineOutput = document.getElementById("defineOutput")
 
+const proxyOutput = document.getElementById("proxyOutput")
 
-function bindElement(state, key, el) {
-  let value = state[key]
+// Manual render
 
-  if(!deps[key]) deps[key] = []
-  deps[key].push(el)
+const manualState = {value: ""};
+attachListeners(input, manualState, "value", manualOutput)
 
-  el.textContent = state[key]
+// Object.define render
 
-}
-
-delete state.count
-state.count = 3
-
-state.guess = 5
-
-state.user.name = "Aji"
-
-
-function createReactiveState(obj) {
-  return new Proxy(obj, {
-    get(target, key) {
-      let value = target[key]
-
-      if(typeof value == "object" && value !== null) {
-        createReactiveState(value)
-      }
-
-      return value
-    },
-    set(target, key, value) {
-      target[key] = value
-
-      if(deps[key]) {
-        deps[key].forEach(elem => {
-          elem.textContent = value
-        })
-      }
-
-      return true
-    }
-  })
-}
+const defineState = {value: ""}
+defineBinding(input, defineState, "value", defineOutput)
