@@ -6,16 +6,23 @@
       <title>Reactivity Playground</title>
 
       <style>
+            html,
+            body {
+                  height: 100%;
+                  overflow: hidden;
+            }
+
             body {
                   margin: 0;
-                  font-family: Arial, sans-serif;
-                  background: #e6edf7;
+                  font-family: Inter, system-ui, Arial, sans-serif;
+                  background: #eef2f7;
+                  color: #222;
             }
 
             /* Header */
             .header {
                   padding: 16px 20px;
-                  background: #2b8dbd;
+                  background: linear-gradient(90deg, #2b8dbd, #4cafef);
                   color: white;
             }
 
@@ -34,122 +41,149 @@
             .container {
                   display: flex;
                   height: calc(100vh - 70px);
+                  overflow: hidden;
             }
 
             .panel {
                   flex: 1;
                   padding: 20px;
                   box-sizing: border-box;
+                  overflow: hidden;
             }
 
             .panel.left {
                   display: flex;
                   flex-direction: column;
-                  border-right: 2px solid #000;
+                  border-right: 1px solid #d0d7e2;
+                  background: #f8fafc;
+                  overflow: hidden;
             }
 
             /* Tabs */
             .tabs {
                   display: flex;
-                  border-bottom: 1px solid #ccc;
-                  background: #dfe7f3;
+                  gap: 8px;
+                  margin-bottom: 16px;
             }
 
             .tab {
-                  padding: 10px 14px;
+                  padding: 8px 14px;
                   cursor: pointer;
-                  background: #cfd9ea;
-                  margin-right: 4px;
-                  border: 1px solid transparent;
-                  border-bottom: none;
+                  border-radius: 6px;
                   font-size: 14px;
+                  background: #e2e8f0;
+                  transition: all 0.2s ease;
             }
 
             .tab:hover {
-                  background: #bccae2;
+                  background: #cbd5e1;
             }
 
             .tab.active {
-                  background: white;
-                  border: 1px solid #ccc;
-                  border-bottom: 1px solid white;
-                  font-weight: bold;
+                  background: #4cafef;
+                  color: white;
+                  font-weight: 500;
             }
 
-            /* Boxes */
+            /* Code Card */
             .box {
-                  background: #f5f5f5;
-                  border: 2px solid #333;
-                  padding: 20px;
-                  box-sizing: border-box;
-            }
-
-            /* Left box should stretch */
-            .panel.left .box {
                   flex: 1;
+                  background: white;
+                  border-radius: 10px;
+                  padding: 16px;
                   display: flex;
                   flex-direction: column;
+                  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+                  overflow: hidden;
             }
 
-            /* Code */
             .code-title {
-                  font-size: 20px;
-                  font-weight: bold;
+                  font-size: 18px;
+                  font-weight: 600;
+                  margin-bottom: 8px;
+            }
+
+            #codeTitle {
+                  font-size: 16px;
+                  font-weight: 600;
+                  margin-bottom: 4px;
+            }
+
+            #codeExplanation {
+                  font-size: 13px;
+                  color: #555;
+                  margin-bottom: 8px;
+            }
+
+            #codeFlow {
+                  font-size: 12px;
+                  padding: 6px 10px;
+                  background: #eef6ff;
+                  border-left: 3px solid #4cafef;
+                  border-radius: 4px;
                   margin-bottom: 10px;
+                  color: #2563eb;
             }
 
             .code-desc {
                   flex: 1;
                   overflow-y: auto;
-                  background: #fff;
-                  border: 1px solid #ccc;
-                  padding: 10px;
+                  background: #0f172a;
+                  color: #e2e8f0;
+                  border-radius: 6px;
+                  padding: 12px;
                   font-family: monospace;
                   font-size: 13px;
+                  line-height: 1.5;
                   white-space: pre;
             }
 
-            /* Preview */
+            /* Right panel */
             .preview {
                   display: flex;
                   flex-direction: column;
-                  gap: 12px;
+                  gap: 14px;
+                  overflow-y: auto;
             }
 
             input {
                   padding: 10px;
-                  font-size: 16px;
-                  border: 1px solid #aaa;
+                  font-size: 15px;
+                  border-radius: 6px;
+                  border: 1px solid #ccc;
             }
 
             button {
                   padding: 8px 12px;
+                  border-radius: 6px;
+                  border: none;
+                  background: #4cafef;
+                  color: white;
                   cursor: pointer;
-                  border: 1px solid #666;
-                  background: white;
             }
 
             button:hover {
-                  background: #f0f0f0;
+                  background: #3b8edb;
             }
 
             .output {
-                  border: 1px solid #aaa;
+                  border-radius: 6px;
+                  border: 1px solid #ddd;
                   padding: 10px;
-                  min-height: 50px;
-                  background: white;
+                  background: #fafafa;
                   font-family: monospace;
             }
 
             strong {
-                  font-size: 14px;
+                  font-size: 13px;
+                  color: #333;
             }
       </style>
 </head>
 
 <body>
 
-      <!-- HEADER (outside container, where it belongs) -->
+      <!-- HEADER -->
       <div class="header">
             <h1>Reactivity Playground</h1>
             <p>Manual vs Object.defineProperty vs Proxy</p>
@@ -167,10 +201,13 @@
                   </div>
 
                   <div class="box">
-                        <div class="code-title">Code</div>
-                        <div class="code-desc" id="codeDisplay">
-                              const state = { value: "" }
-                        </div>
+                        <div class="code-title">Code Viewer</div>
+
+                        <div id="codeTitle"></div>
+                        <div id="codeExplanation"></div>
+                        <div id="codeFlow"></div>
+
+                        <div class="code-desc" id="codeDisplay"></div>
                   </div>
 
             </div>
