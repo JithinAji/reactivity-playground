@@ -18,7 +18,7 @@ const defineProxy = (input, state, attr, elem) => {
     },
    set(target, key, value) {
     target[key] = value
-    renderEffect(attr)
+    renderEffect(key)
     return true
     }
   }

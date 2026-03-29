@@ -49,14 +49,15 @@
                   padding: 20px;
                   box-sizing: border-box;
                   overflow: hidden;
+
+                  /* 🔥 critical fix */
+                  display: flex;
+                  flex-direction: column;
             }
 
             .panel.left {
-                  display: flex;
-                  flex-direction: column;
                   border-right: 1px solid #d0d7e2;
                   background: #f8fafc;
-                  overflow: hidden;
             }
 
             /* Tabs */
@@ -85,7 +86,7 @@
                   font-weight: 500;
             }
 
-            /* Code Card */
+            /* Code Panel */
             .box {
                   flex: 1;
                   background: white;
@@ -106,7 +107,6 @@
             #codeTitle {
                   font-size: 16px;
                   font-weight: 600;
-                  margin-bottom: 4px;
             }
 
             #codeExplanation {
@@ -134,56 +134,114 @@
                   padding: 12px;
                   font-family: monospace;
                   font-size: 13px;
-                  line-height: 1.5;
                   white-space: pre;
             }
 
-            /* Right panel */
+            /* Right panel scroll container */
             .preview {
                   display: flex;
                   flex-direction: column;
                   gap: 14px;
+
+                  /* 🔥 actual scroll */
                   overflow-y: auto;
+                  flex: 1;
             }
 
-            input {
+            /* Property card */
+            .property-card {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                  padding: 14px;
+                  border-radius: 10px;
+                  background: white;
+                  border: 1px solid #e2e8f0;
+                  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            }
+
+            /* Input */
+            .input-group {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 6px;
+            }
+
+            .input-group label {
+                  font-size: 11px;
+                  text-transform: uppercase;
+                  color: #64748b;
+                  letter-spacing: 0.5px;
+            }
+
+            .input-group input {
                   padding: 10px;
-                  font-size: 15px;
+                  font-size: 14px;
                   border-radius: 6px;
-                  border: 1px solid #ccc;
+                  border: 1px solid #cbd5e1;
+                  background: white;
             }
 
-            button {
-                  padding: 8px 12px;
+            .input-group input:focus {
+                  outline: none;
+                  border-color: #4cafef;
+                  box-shadow: 0 0 0 2px rgba(76, 175, 239, 0.2);
+            }
+
+            /* Outputs */
+            .outputs {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 8px;
+            }
+
+            .row {
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+            }
+
+            .label {
+                  width: 60px;
+                  font-size: 12px;
+                  color: #64748b;
+                  font-weight: 500;
+            }
+
+            .output {
+                  display: inline-block;
+                  min-width: 90px;
+                  padding: 4px 8px;
                   border-radius: 6px;
+                  border: 1px solid #d1d5db;
+                  background: #f1f5f9;
+                  font-family: monospace;
+                  font-size: 12px;
+            }
+
+            /* Button */
+            button {
+                  margin-top: 12px;
+                  padding: 8px 14px;
+                  border-radius: 8px;
                   border: none;
                   background: #4cafef;
                   color: white;
+                  font-weight: 500;
                   cursor: pointer;
+                  transition: all 0.2s ease;
+                  width: fit-content;
             }
 
             button:hover {
                   background: #3b8edb;
-            }
-
-            .output {
-                  border-radius: 6px;
-                  border: 1px solid #ddd;
-                  padding: 10px;
-                  background: #fafafa;
-                  font-family: monospace;
-            }
-
-            strong {
-                  font-size: 13px;
-                  color: #333;
+                  transform: translateY(-1px);
             }
       </style>
 </head>
 
 <body>
 
-      <!-- HEADER -->
       <div class="header">
             <h1>Reactivity Playground</h1>
             <p>Manual vs Object.defineProperty vs Proxy</p>
@@ -191,7 +249,7 @@
 
       <div class="container">
 
-            <!-- LEFT PANEL -->
+            <!-- LEFT -->
             <div class="panel left">
 
                   <div class="tabs">
@@ -202,41 +260,46 @@
 
                   <div class="box">
                         <div class="code-title">Code Viewer</div>
-
                         <div id="codeTitle"></div>
                         <div id="codeExplanation"></div>
                         <div id="codeFlow"></div>
-
                         <div class="code-desc" id="codeDisplay"></div>
                   </div>
 
             </div>
 
-            <!-- RIGHT PANEL -->
+            <!-- RIGHT -->
             <div class="panel">
 
                   <div class="box preview">
 
-                        <input id="sharedInput" placeholder="Type something..." />
+                        <div class="property-card">
+                              <div class="input-group">
+                                    <label for="sharedInput">Value</label>
+                                    <input id="sharedInput" placeholder="Type something..." />
+                              </div>
 
-                        <button id="addProperty">Add Property</button>
+                              <div class="outputs">
+                                    <div class="row">
+                                          <span class="label">Manual</span>
+                                          <span class="output" id="manualOutput"></span>
+                                    </div>
 
-                        <div>
-                              <strong>Manual:</strong>
-                              <div class="output" id="manualOutput"></div>
-                        </div>
+                                    <div class="row">
+                                          <span class="label">Define</span>
+                                          <span class="output" id="defineOutput"></span>
+                                    </div>
 
-                        <div>
-                              <strong>Define:</strong>
-                              <div class="output" id="defineOutput"></div>
-                        </div>
-
-                        <div>
-                              <strong>Proxy:</strong>
-                              <div class="output" id="proxyOutput"></div>
+                                    <div class="row">
+                                          <span class="label">Proxy</span>
+                                          <span class="output" id="proxyOutput"></span>
+                                    </div>
+                              </div>
                         </div>
 
                   </div>
+
+                  <button id="addProperty">+ Add Property</button>
 
             </div>
 
