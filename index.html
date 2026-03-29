@@ -1,14 +1,212 @@
-<html>
-  <head>
-    <title>Reactivity Playground</title>
-  </head>
-  <body>
-    <input id="sharedInput" />
+<!DOCTYPE html>
+<html lang="en">
 
-    <p id="manualOutput"></p>
-    <p id="defineOutput"></p>
-    <p id="proxyOutput"></p>
+<head>
+      <meta charset="UTF-8" />
+      <title>Reactivity Playground</title>
 
-    <script type="module" src="./manual.js"></script>
-  </body>
+      <style>
+            body {
+                  margin: 0;
+                  font-family: Arial, sans-serif;
+                  background: #e6edf7;
+            }
+
+            /* Header */
+            .header {
+                  padding: 16px 20px;
+                  background: #2b8dbd;
+                  color: white;
+            }
+
+            .header h1 {
+                  margin: 0;
+                  font-size: 20px;
+            }
+
+            .header p {
+                  margin: 4px 0 0;
+                  font-size: 13px;
+                  opacity: 0.9;
+            }
+
+            /* Layout */
+            .container {
+                  display: flex;
+                  height: calc(100vh - 70px);
+            }
+
+            .panel {
+                  flex: 1;
+                  padding: 20px;
+                  box-sizing: border-box;
+            }
+
+            .panel.left {
+                  display: flex;
+                  flex-direction: column;
+                  border-right: 2px solid #000;
+            }
+
+            /* Tabs */
+            .tabs {
+                  display: flex;
+                  border-bottom: 1px solid #ccc;
+                  background: #dfe7f3;
+            }
+
+            .tab {
+                  padding: 10px 14px;
+                  cursor: pointer;
+                  background: #cfd9ea;
+                  margin-right: 4px;
+                  border: 1px solid transparent;
+                  border-bottom: none;
+                  font-size: 14px;
+            }
+
+            .tab:hover {
+                  background: #bccae2;
+            }
+
+            .tab.active {
+                  background: white;
+                  border: 1px solid #ccc;
+                  border-bottom: 1px solid white;
+                  font-weight: bold;
+            }
+
+            /* Boxes */
+            .box {
+                  background: #f5f5f5;
+                  border: 2px solid #333;
+                  padding: 20px;
+                  box-sizing: border-box;
+            }
+
+            /* Left box should stretch */
+            .panel.left .box {
+                  flex: 1;
+                  display: flex;
+                  flex-direction: column;
+            }
+
+            /* Code */
+            .code-title {
+                  font-size: 20px;
+                  font-weight: bold;
+                  margin-bottom: 10px;
+            }
+
+            .code-desc {
+                  flex: 1;
+                  overflow-y: auto;
+                  background: #fff;
+                  border: 1px solid #ccc;
+                  padding: 10px;
+                  font-family: monospace;
+                  font-size: 13px;
+                  white-space: pre;
+            }
+
+            /* Preview */
+            .preview {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+            }
+
+            input {
+                  padding: 10px;
+                  font-size: 16px;
+                  border: 1px solid #aaa;
+            }
+
+            button {
+                  padding: 8px 12px;
+                  cursor: pointer;
+                  border: 1px solid #666;
+                  background: white;
+            }
+
+            button:hover {
+                  background: #f0f0f0;
+            }
+
+            .output {
+                  border: 1px solid #aaa;
+                  padding: 10px;
+                  min-height: 50px;
+                  background: white;
+                  font-family: monospace;
+            }
+
+            strong {
+                  font-size: 14px;
+            }
+      </style>
+</head>
+
+<body>
+
+      <!-- HEADER (outside container, where it belongs) -->
+      <div class="header">
+            <h1>Reactivity Playground</h1>
+            <p>Manual vs Object.defineProperty vs Proxy</p>
+      </div>
+
+      <div class="container">
+
+            <!-- LEFT PANEL -->
+            <div class="panel left">
+
+                  <div class="tabs">
+                        <div class="tab active" data-mode="manual">Manual</div>
+                        <div class="tab" data-mode="define">Object.define</div>
+                        <div class="tab" data-mode="proxy">Proxy</div>
+                  </div>
+
+                  <div class="box">
+                        <div class="code-title">Code</div>
+                        <div class="code-desc" id="codeDisplay">
+                              const state = { value: "" }
+                        </div>
+                  </div>
+
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="panel">
+
+                  <div class="box preview">
+
+                        <input id="sharedInput" placeholder="Type something..." />
+
+                        <button id="addProperty">Add Property</button>
+
+                        <div>
+                              <strong>Manual:</strong>
+                              <div class="output" id="manualOutput"></div>
+                        </div>
+
+                        <div>
+                              <strong>Define:</strong>
+                              <div class="output" id="defineOutput"></div>
+                        </div>
+
+                        <div>
+                              <strong>Proxy:</strong>
+                              <div class="output" id="proxyOutput"></div>
+                        </div>
+
+                  </div>
+
+            </div>
+
+      </div>
+
+      <script type="module" src="./main.js"></script>
+
+</body>
+
 </html>

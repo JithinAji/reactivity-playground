@@ -1,69 +1,28 @@
-const state = createReactiveState({
-  count: 0,
-  user: {
-    name: "Aji"
-  }
-})
+import attachListeners from "./manualBinding.js"
+import defineBinding from "./objectDefineBinding.js"
+import defineProxy from "./proxyBinding.js"
 
-const deps = {}
+const tabs = document.getElementsByClassName("tabs")
+const codeDisplay = document.getElementById("codeDisplay")
 
-const el1 = document.getElementById("appDisplay1")
-el1.textContent = state.count
+const input = document.getElementById("sharedInput")
+const button = document.getElementById("addProperty")
 
-bindElement(state, "count", el1)
+const manualOutput = document.getElementById("manualOutput")
+const defineOutput = document.getElementById("defineOutput")
+const proxyOutput = document.getElementById("proxyOutput")
 
-const el2 = document.getElementById("appDisplay2")
-el2.textContent = state.user.name
+// Manual render
 
-bindElement(state.user, "name", el2)
-state.user.name = "Jithin"
+const manualState = {value: ""};
+attachListeners(input, manualState, "value", manualOutput)
 
-const incBtn = document.getElementById("incrementButton")
-incBtn.addEventListener("click", () => {
-  state.count ++
-  //el.textContent = state.count
-})
+// Object.define render
 
+const defineState = {value: ""}
+defineBinding(input, defineState, "value", defineOutput)
 
-function bindElement(state, key, el) {
-  let value = state[key]
+// Proxy render
 
-  if(!deps[key]) deps[key] = []
-  deps[key].push(el)
-
-  el.textContent = state[key]
-
-}
-
-delete state.count
-state.count = 3
-
-state.guess = 5
-
-state.user.name = "Aji"
-
-
-function createReactiveState(obj) {
-  return new Proxy(obj, {
-    get(target, key) {
-      let value = target[key]
-
-      if(typeof value == "object" && value !== null) {
-        createReactiveState(value)
-      }
-
-      return value
-    },
-    set(target, key, value) {
-      target[key] = value
-
-      if(deps[key]) {
-        deps[key].forEach(elem => {
-          elem.textContent = value
-        })
-      }
-
-      return true
-    }
-  })
-}
+const proxyState = {value: ""}
+defineProxy(input, proxyState, "value", proxyOutput)
